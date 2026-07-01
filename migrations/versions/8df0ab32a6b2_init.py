@@ -34,8 +34,9 @@ def upgrade() -> None:
     sa.PrimaryKeyConstraint('uid')
     )
     op.alter_column('books', 'publisher_date',
-               existing_type=sa.VARCHAR(),
+               existing_type=sa.Date(),
                type_=sa.Date(),
+               postgresql_using="publisher_date::date",
                existing_nullable=False)
     # ### end Alembic commands ###
 
