@@ -8,10 +8,15 @@ from fastapi.responses import JSONResponse
 from .utils import create_access_token, decode_token, verify_password
 from datetime import timedelta
 
+
+
 auth_router = APIRouter()
 user_service = UserService()
 
 REFRESH_TOKEN_EXPIRY = 2
+
+#Bearer token
+
 
 @auth_router.post(
     "/signup",
