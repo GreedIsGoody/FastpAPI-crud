@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, status
-from .schemas import UserCreateModel, UserModel, UserLoginModel
+from .schemas import UserCreateModel, UserModel, UserLoginModel, UserBooksModel
 from .service import UserService
 from src.db.main import get_session
 from sqlmodel.ext.asyncio.session import AsyncSession
@@ -24,7 +24,7 @@ REFRESH_TOKEN_EXPIRY = 2
     response_model=UserModel,
     status_code=status.HTTP_201_CREATED
 )
-async def create_user_Account(user_data: UserCreateModel, session: AsyncSession = Depends(get_session) ):
+async def create_user_Account(user_data: UserCreateModel, session: AsyncSession = Depends(get_session)):
     email = user_data.email
     
     user_exists = await user_service.user_exists(email, session)
@@ -37,7 +37,7 @@ async def create_user_Account(user_data: UserCreateModel, session: AsyncSession 
     return new_user
 
 @auth_router.post('/login')
-async def login_users(login_data: UserCreateModel, session: AsyncSession = Depends(get_session)):
+async def login_users(login_data: UserLoginModel, session: AsyncSession = Depends(get_session)):
     email = login_data.email
     password = login_data.password
     
@@ -93,7 +93,7 @@ async def refresh_access_token(token_details: dict = Depends(RefreshTokenBearer(
         })
     raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Invalid or expired refresh token')
 
-@auth_router.get('/me', response_model=UserModel)
+@auth_router.get('/me', response_model=UserBooksModel)
 async def get_current_user(user = Depends(get_current_user), _: bool=Depends(role_checker)):
     return user
 
