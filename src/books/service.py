@@ -2,7 +2,7 @@ import uuid
 from sqlmodel.ext.asyncio.session import AsyncSession
 from .schemas import BookCreateModel, BookUpdateModel
 from sqlmodel import select, desc, delete
-from .models import BookModel
+from src.db.models import BookModel
 from datetime import datetime
 
 class BookService:
