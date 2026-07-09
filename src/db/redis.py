@@ -2,6 +2,7 @@ from redis import asyncio as aioredis
 from src.config import Config
 
 JTI_EXPIRY = 3600
+BOOK_CACHE_EXPIRY = 3600
 
 token_blocklist= aioredis.StrictRedis(
     host=Config.REDIS_HOST,
@@ -22,17 +23,20 @@ async def token_in_blocklist(jti: str) -> bool:
     
     return jti is not None
 
+# caching a books
 
-# admin permissions
-[
-    'adding users',
-    'change roles',
-    'crud on users',
-    'book submissions',
-    'crud on users',
-    'crud on reviews',
-    'revorking access',
-]
+async def set_cache(key: str, value: str, expiry: int = BOOK_CACHE_EXPIRY) -> None:
+    await token_blocklist.set(
+        name=key,
+        value=value,
+        ex=expiry
+    )
+async def get_cache(key: str) -> str | None:
+    value = await token_blocklist.get(key)
+    if value:
+        return value.decode("utf-8")
+    return None
 
-# users 
-['crud on their own book submissions', 'crud on their reviews', 'crud on their own accounts']
+
+async def clear_cache(key: str) -> None:
+    await token_blocklist.delete(key)
