@@ -1,3 +1,4 @@
+import logging
 from src.db.models import Reviews
 from src.auth.service import UserService
 from src.books.service import BookService
@@ -7,12 +8,15 @@ from fastapi import status
 from fastapi.exceptions import HTTPException
 import logging
 
+logger = logging.getLogger(__name__)
+
 book_service = BookService()
 user_service = UserService()
 
 class ReviewService():
     
     async def add_review_to_book(self,user_email: str, book_uid: str, review_data: ReviewsCreateModel, session: AsyncSession):
+        logger.info(f"Trying to add a review to a book from user {user_email} to book with UID")
         try:
             book =  await book_service.get_books(book_uid=book_uid, session=session)
             user = await user_service.get_user_by_email(user_email, session=session)
@@ -22,11 +26,13 @@ class ReviewService():
             
             
             if book is None:
+                logger.warning(f"Error of adding a review, book with {book_uid} is not found")
                 raise HTTPException(
                     status_code=status.HTTP_404_NOT_FOUND,
                     detail='Book was not found'
                 )
             if user is None:
+                logger.warning(f"Error of adding a review, user with {user_email} is not found")
                 raise HTTPException(
                     status_code=status.HTTP_404_NOT_FOUND,
                     detail='User was not found'
@@ -40,10 +46,11 @@ class ReviewService():
             
             await session.commit()
             
+            logger.info(f"Review is successfully added to a book! If of a review is {new_review.uid}")
             return new_review
             
         except Exception as e:
-            logging.exception(e)
+            logging.error(f"Fatal error while trying to save a review in Database: {str(e)}", exc_info=True)
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="Oops...Something is wrong"

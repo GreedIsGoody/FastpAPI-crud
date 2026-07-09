@@ -48,7 +48,7 @@ async def get_book(
     session:AsyncSession = Depends(get_session), 
     token_details: dict = Depends(access_token_bearer)
     ) -> BookModel:
-    book = await book_service.get_books(book_uid, session)
+    book = await book_service.get_book(book_uid, session)
     
     if book is not None:
         return book
