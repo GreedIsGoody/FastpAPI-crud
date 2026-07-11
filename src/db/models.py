@@ -3,13 +3,14 @@ import sqlalchemy.dialects.postgresql as pg
 from typing import List, Optional
 from datetime import datetime, date
 import uuid
+from sqlalchemy import Uuid
 
 
 class User(SQLModel, table=True):
     __tablename__ = "users"
     uid: uuid.UUID = Field(                  
         sa_column=Column(                    
-            pg.UUID,
+            Uuid(as_uuid=True),
             nullable=False,
             primary_key=True,
             default=uuid.uuid4
@@ -39,7 +40,7 @@ class BookModel(SQLModel, table=True):
     __tablename__ = "books"
     uid: uuid.UUID = Field(                  
         sa_column=Column(                    
-            pg.UUID,
+            Uuid(as_uuid=True),
             nullable=False,
             primary_key=True,
             default=uuid.uuid4

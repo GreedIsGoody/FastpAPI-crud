@@ -69,7 +69,7 @@ class BookService:
         new_book = BookModel(
             **book_data_dict
         )
-        new_book.user_uid = user_uid
+        new_book.user_uid = uuid.UUID(user_uid)
         
         
         
